@@ -1,7 +1,6 @@
 // To add more tweets, add to tweets.h
 
 #include "HT1632.h"
-#include "asciitweets.h"
 
 #define DATA 2
 #define WR   3
