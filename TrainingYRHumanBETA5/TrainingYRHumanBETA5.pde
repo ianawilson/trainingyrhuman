@@ -49,16 +49,16 @@ int timetweets = 0;
 Serial myPort;
 
 void setup() {
-  myPort = new Serial(this, Serial.list()[0], 9600);
-  //myPort = new Serial(this, Serial.list()[0], 9600);
-  //myPort.bufferUntil(true);
+  // consult the printed list and choose the index of wherever your arduino is connected
+  println(Serial.list());
+  int arduinoPort = 1;
+  
+  myPort = new Serial(this, Serial.list()[arduinoPort], 9600);
+  
   lines = loadStrings(tweetsPath);
-  size(1440,900); // Macbook Air
-  // size(1920,1080); // Vancouver Macs
   background(152,152,152);
   connectTwitter();
   getSearchTweets();
-  DisplayTweets(); 
   rectMode(CORNER);
 }
 
@@ -66,8 +66,10 @@ int inByte;
 
 void serialEvent(Serial p) {
   inByte = myPort.read();
-  if (inByte == 1)
-    myPort.write(getTweet()+'\n');
+  if (inByte == 1) {
+    String tweet = getTweet();
+    myPort.write(tweet+'\n');
+  }
 }
 
 boolean bFlashBg = true;

@@ -67,6 +67,8 @@ void reset() {
 String getTweetFromProcessing() {
   // send a byte with value "true", 0x01, as a request
   byte request = (byte) true;
+  Serial.write(request);
+  
   bool done = false;
   String buffer = "";
   
