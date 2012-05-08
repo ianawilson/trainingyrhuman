@@ -20,13 +20,11 @@ CC-BY
 
 */
 
-// This is where you enter your Oauth info
-static String OAuthConsumerKey = "TDMj0jtcA4Gb3TOBd5B6A";
-static String OAuthConsumerSecret = "aFcyHegp4PWf2PFlG1TsU3hnafEuF8rC0ZNMc4obE3Y";
-
-// This is where you enter your Access Token info
-static String AccessToken = "318024495-y7Zot2axO0piHWE6QCDjCMaXftAcfKvEZDcbvT6V";
-static String AccessTokenSecret = "4ytPp6c535NO6hjQQRA2KaYcSveqcDXQJe5bH84NBM";
+// using secret.java, which has:
+// static String OAuthConsumerKey
+// static String OAuthConsumerSecret
+// static String AccessToken
+// static String AccessTokenSecret
 
 // variable set up
 String myTimeline;
@@ -55,6 +53,8 @@ void setup() {
   getSearchTweets();
   DisplayTweets(); 
   rectMode(CORNER);
+  
+  println(OAuthConsumerSecret);
 }
 
 boolean bFlashBg = true;
