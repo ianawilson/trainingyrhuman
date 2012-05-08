@@ -26,8 +26,6 @@ int scrollPos;
 int charPos;
 // charWidth = 6, 6 pixels per char
 int charWidth = 6;
-// tweetPos is the tweet that we're reading from currently
-int tweetPos;
 
 String prevSubstring;
 int prevScrollPos;
@@ -35,6 +33,8 @@ int prevScrollPos;
 String tweet;
 
 void setup() {
+  Serial.begin(9600);
+  
   matrix.begin(HT1632_COMMON_16NMOS);  
   
   // setup for text
@@ -60,13 +60,36 @@ void reset() {
   // setup for printTweet
   scrollPos = matrix.width();
   charPos = 0;
-  tweetPos = random(numTweets);
-  // get the tweet out of progmem, put it into a buffer
-  strcpy_P(buffer, (char*)pgm_read_word(&(tweets[tweetPos]))); // Necessary casts and dereferencing, just copy. 
-  // make a string out of this buffer
-  tweet = (buffer);
+  tweet = getTweetFromProcessing();
 }
 
+
+String getTweetFromProcessing() {
+  // send a byte with value "true", 0x01, as a request
+  byte request = (byte) true;
+  bool done = false;
+  String buffer = "";
+  
+  // while we have not hit the null terminator
+  while (! done) {
+    // if there is something to read
+    if(Serial.available() > 0) {
+      // read a single char, append to string
+      char c = Serial.read();
+      Serial.print(c);
+      buffer += c;
+      
+      // if it's a null terminator, we're done
+      if (c == '\0') {
+        done = true;
+      }
+    }
+  }
+  Serial.print('\n');
+  Serial.println(buffer);
+  
+  return buffer;
+}
 
 void printTweet() {
   // figure out where we are
