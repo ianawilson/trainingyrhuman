@@ -38,10 +38,10 @@ String[] theSearchTweets = new String[12];
 int tweetindex = 0;
 String tweetsPath = "tweets.txt"; // made this relative so it is more portable
 String [] lines;
-int latesttweet = 1;
+ArrayList unreadTweets = new ArrayList();
 
 int timeDelay = 12000; //10000 milliseconds = 10 seconds
-int tweetTimeDelay = 600000; //get tweets once every 10 minutes
+int tweetTimeDelay = 60000; //get tweets once every minute
 
 int time = 0;
 int timetweets = 0;
@@ -196,12 +196,18 @@ void getSearchTweets() {
       }
 
       if (!msgInFile){
-        FileWriter file;
+        // FileWriter file;
         try  
-        {  
-          file = new FileWriter(tweetsPath, true); //bool tells to append test should be theSearchTweets[i] instead //changed
-          file.write("\n"+msg, 0, msg.length()+1); //(string, start char, end char)
-          file.close();
+        {
+          // file = new FileWriter(tweetsPath, true); //bool tells to append test should be theSearchTweets[i] instead //changed
+          // file.write("\n"+msg, 0, msg.length()+1); //(string, start char, end char)
+          // file.flush();
+          // println(file.toString());
+          // file.close();
+          newLines
+          saveStrings(tweetsPath, lines);
+          println("Found new tweet: " + msg);
+          unreadTweets.add(msg);
         }  
         catch(Exception e)  
         {  
@@ -238,6 +244,12 @@ void DisplayTweets() {
 
 
 String getTweet() {
+  // if we have any unread tweets (brand new since this session)
+  // display one of those
+  if (unreadTweets.size() > 0) {
+    return (String) unreadTweets.remove(0);
+  }
+  // if no unread tweets,
   // get a random value from the array length then check to see we are in bounds if we are then display a tweet
   // int y = 200;
   // int index = 1;
@@ -254,7 +266,7 @@ String getTweet() {
     println("This is the else");
     println(tweetindex);
     // getSearchTweets();
-    String [] lines = loadStrings(tweetsPath); //changed
+    lines = loadStrings(tweetsPath); //changed
     background(152,152,152);
     // send the very latest tweet aby subtracing one from the total length or else it errors: array out of bounds
     tweetindex = (tweetindex + 1);
