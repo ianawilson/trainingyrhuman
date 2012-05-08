@@ -52,6 +52,7 @@ void setup() {
   // consult the printed list and choose the index of wherever your arduino is connected
   println(Serial.list());
   int arduinoPort = 1;
+  println("NOTE: Using port " + arduinoPort + " from above. If this is incorrect, adjust 'int arduinoPort' in void setup().");
   
   myPort = new Serial(this, Serial.list()[arduinoPort], 9600);
   
