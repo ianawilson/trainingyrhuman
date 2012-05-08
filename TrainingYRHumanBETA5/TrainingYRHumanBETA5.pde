@@ -103,14 +103,12 @@ void visualize() {
     timeDelay = 12000; // time delay for reading the text
   }
   if (bFlashBg) {
-    //~     println("FLASHING");
     rectMode(CORNER);
     float m = millis();
     fill(m % 150);
     rect(0, 0, 1440, 900);
   } else {
 
-    //~     println("NO FLASHING");
     if (bWaitText) {
       bWaitText = !bWaitText;
       DisplayTweets();
@@ -185,7 +183,7 @@ void getSearchTweets() {
           String[] matches = match(nextLine, msg); //look for msg in the current line 
           if (matches != null){ //if there is at least one match
             msgInFile = true; //note as much
-            println("found duplicate of " + msg + " in existing tweet archive.\n");
+            println("Found duplicate in existing tweet archive:\n" + msg);
             break;  //and quit searching for the current message
           }
         }
@@ -198,20 +196,24 @@ void getSearchTweets() {
       if (!msgInFile){
         // FileWriter file;
         try  
-        {
-          // file = new FileWriter(tweetsPath, true); //bool tells to append test should be theSearchTweets[i] instead //changed
-          // file.write("\n"+msg, 0, msg.length()+1); //(string, start char, end char)
-          // file.flush();
-          // println(file.toString());
-          // file.close();
-          newLines
-          saveStrings(tweetsPath, lines);
+        { 
+          // append new tweet to lines
+          String[] newLines = new String[lines.length + 1];
+          System.arraycopy(lines, 0, newLines, 0, lines.length);
+          // add msg to last spot in array, which should be unoccupied
+          newLines[newLines.length - 1] = msg;
+          
+          // save lines to file again
+          // for some reason, saveStrings doesn't assume to write in the data dir,
+          // so it is added here manually
+          saveStrings("data/" + tweetsPath, newLines);
+          
           println("Found new tweet: " + msg);
           unreadTweets.add(msg);
         }  
         catch(Exception e)  
         {  
-          println("Error: Can't open tweets file!");
+          println("Error: Can't open tweets file! " + e);
         } 
       }
     }
@@ -255,17 +257,11 @@ String getTweet() {
   // int index = 1;
   int r = int(random(lines.length));
   if(tweetindex <= lines.length){ 
-    println(r);
-    // 
-    
     tweetindex = (tweetindex + 1);
     
     return lines[r];
   } else {
     tweetindex = 0; // reset counter
-    println("This is the else");
-    println(tweetindex);
-    // getSearchTweets();
     lines = loadStrings(tweetsPath); //changed
     background(152,152,152);
     // send the very latest tweet aby subtracing one from the total length or else it errors: array out of bounds
