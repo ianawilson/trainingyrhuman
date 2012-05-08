@@ -14,7 +14,7 @@ HT1632LEDMatrix matrix = HT1632LEDMatrix(DATA, WR, CS0, CS1, CS2, CS3);
 
 
 // buffer is plenty long (should only have a max of 140)
-char buffer[160];
+// char buffer[160];
 
 
 // DON'T TOUCH THESE !!
@@ -40,12 +40,12 @@ void setup() {
   // setup for text
   matrix.setTextSize(1);    // size 1 == 8 pixels high
   
-  reset();
-  
   // little "hello" screen flash and clear
   matrix.fillScreen();
   delay(500);
   matrix.clearScreen();
+  
+  reset();
 }
 
 
@@ -76,17 +76,14 @@ String getTweetFromProcessing() {
     if(Serial.available() > 0) {
       // read a single char, append to string
       char c = Serial.read();
-      Serial.print(c);
       buffer += c;
       
       // if it's a null terminator, we're done
-      if (c == '\0') {
+      if (c == '\n') {
         done = true;
       }
     }
   }
-  Serial.print('\n');
-  Serial.println(buffer);
   
   return buffer;
 }
