@@ -53,8 +53,6 @@ void setup() {
   getSearchTweets();
   DisplayTweets(); 
   rectMode(CORNER);
-  
-  println(OAuthConsumerSecret);
 }
 
 boolean bFlashBg = true;
@@ -62,6 +60,26 @@ boolean bWaitText = true;
 boolean bCheckTweets = true;
 
 void draw() {
+  
+  // visualize();
+  
+  // Get new tweets from internet
+  if (millis() - timetweets >= tweetTimeDelay) {
+    timetweets = millis();
+    println("Getting Search Tweets");
+    getSearchTweets();
+  }
+}
+// Initial connection
+void connectTwitter() {
+
+  twitter.setOAuthConsumer(OAuthConsumerKey, OAuthConsumerSecret);
+  AccessToken accessToken = loadAccessToken();
+  twitter.setOAuthAccessToken(accessToken);
+
+}
+
+void visualize() {
   if (bFlashBg) {
     timeDelay = 5000; // time delay for strobe effect
   } else {
@@ -86,19 +104,6 @@ void draw() {
     bFlashBg = !bFlashBg;
     bWaitText = true;
   }
-  if (millis() - timetweets >= tweetTimeDelay) {
-    timetweets = millis();
-    println("Getting Search Tweets");
-    getSearchTweets();
-  }
-}
-// Initial connection
-void connectTwitter() {
-
-  twitter.setOAuthConsumer(OAuthConsumerKey, OAuthConsumerSecret);
-  AccessToken accessToken = loadAccessToken();
-  twitter.setOAuthAccessToken(accessToken);
-
 }
 
 // Sending a tweet
