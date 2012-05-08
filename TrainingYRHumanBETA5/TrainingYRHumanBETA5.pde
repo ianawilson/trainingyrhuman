@@ -160,6 +160,7 @@ void getTimeline() {
 // getSearchTweets()  ---- Search for tweets and write them to tweets.txt
 void getSearchTweets() {
   String queryStr = "#trainingYRhuman";
+  println("Searching for new tweets with " + queryStr);
   try {
     Query query = new Query(queryStr);    
     query.setRpp(10); // Get 10 of the 100 search results  
@@ -173,51 +174,42 @@ void getSearchTweets() {
       Date d = t.getCreatedAt();
 
       theSearchTweets[i] = msg.substring(queryStr.length()+1);
-      // text(theSearchTweets[i], width/2, height-250, width/1, 800); // print tweet on screen 
 
       //decide whether or not to write the tweet to file by checking whether the tweet's message appears in the file 
-      Boolean msgInFile = false;
-      BufferedReader reader;
-      try {
-        reader = createReader(tweetsPath);   //first open the file for reading
-        for (String nextLine = reader.readLine(); nextLine != null; nextLine = reader.readLine()){ //do a linear search through the file...
-          String[] matches = match(nextLine, msg); //look for msg in the current line 
-          if (matches != null){ //if there is at least one match
-            msgInFile = true; //note as much
-            println("Found duplicate in existing tweet archive:\n" + msg);
-            break;  //and quit searching for the current message
-          }
+      boolean isDuplicate = false;
+      for (int line = 0; line < lines.length; line++) {
+        // String[] matches = match(lines[line], msg);
+        if (msg.equals(lines[line])) {
+          isDuplicate = true;
         }
       }
-      catch(Exception e){ 
-        println("Error: Can't read tweets file.");
-        println(e.getMessage());
-      }
 
-      if (!msgInFile){
-        // FileWriter file;
+      if (!isDuplicate){
+        println("Found new tweet: " + msg);
+        
         try  
-        { 
+        {
           // append new tweet to lines
           String[] newLines = new String[lines.length + 1];
           System.arraycopy(lines, 0, newLines, 0, lines.length);
           // add msg to last spot in array, which should be unoccupied
           newLines[newLines.length - 1] = msg;
+          // we rely on lines, so we update it with newLines
+          lines = newLines;
           
           // save lines to file again
           // for some reason, saveStrings doesn't assume to write in the data dir,
           // so it is added here manually
           saveStrings("data/" + tweetsPath, newLines);
           
-          println("Found new tweet: " + msg);
           unreadTweets.add(msg);
         }  
         catch(Exception e)  
         {  
           println("Error: Can't open tweets file! " + e);
         } 
-      }
-    }
+      } // end not duplicate
+    } // end for loop
 
   } catch (TwitterException e) {
     println("Search tweets: " + e);
