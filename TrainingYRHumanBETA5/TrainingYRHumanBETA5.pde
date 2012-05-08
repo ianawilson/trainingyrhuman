@@ -1,3 +1,5 @@
+import processing.serial.*;
+
 /*
 TrainingYRHuman - 2011 
 a project created by ecoarttech: 
@@ -44,7 +46,12 @@ int tweetTimeDelay = 600000; //get tweets once every 10 minutes
 int time = 0;
 int timetweets = 0;
 
+Serial myPort;
+
 void setup() {
+  myPort = new Serial(this, Serial.list()[0], 9600);
+  //myPort = new Serial(this, Serial.list()[0], 9600);
+  //myPort.bufferUntil(true);
   lines = loadStrings(tweetsPath);
   size(1440,900); // Macbook Air
   // size(1920,1080); // Vancouver Macs
@@ -53,6 +60,14 @@ void setup() {
   getSearchTweets();
   DisplayTweets(); 
   rectMode(CORNER);
+}
+
+int inByte;
+
+void serialEvent(Serial p) {
+  inByte = myPort.read();
+  if (inByte == 1)
+    myPort.write(getTweet()+'\n');
 }
 
 boolean bFlashBg = true;
