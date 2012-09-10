@@ -70,6 +70,7 @@ void serialEvent(Serial p) {
   if (inByte == 1) {
     String tweet = getTweet();
     myPort.write(tweet+'\n');
+    println("Tweet requested. Sending: " + tweet);
   }
 }
 
